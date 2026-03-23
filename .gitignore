@@ -1,0 +1,17 @@
+# Power BI temp/cache files
+*.pbit
+*.pbix.tmp
+*.cache
+
+# Large raw datasets
+*.json
+*.zip
+*.7z
+
+# Python cache
+__pycache__/
+*.pyc
+
+# System files
+.DS_Store
+Thumbs.db
