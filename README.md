@@ -7,17 +7,12 @@ The goal of this project is to analyze cybersecurity attack data and understand 
 
 Instead of manually reading thousands of security logs, the dashboard converts complex technical data into clear visual insights that help monitoring and investigation.
 
-## 📊 Dashboard Preview
-
+## 📊 Dashboard Preview  (https://cybersecurity-powerbi-dashboard.vercel.app/)
 ### Overview Page
-![Overview](Images/overview.png)
-
 ### Technical Analysis Page
-![Technical](Images/technical.png)
-
 ### Investigation Page
-![Investigation](Images/investigation.png)
 
+ 
 
 ---
 
