@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberShield — Threat Intelligence Dashboard</title>
+  <meta name="description" content="Real-time cybersecurity threat intelligence dashboard analyzing 5000+ attack events across global infrastructure." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Animated Background Particles -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <path d="M18 2L4 8V18C4 25.7 10.1 32.9 18 34C25.9 32.9 32 25.7 32 18V8L18 2Z" fill="none" stroke="#00ff88" stroke-width="2"/>
+        <path d="M12 18L16 22L24 14" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-text">CYBER<span class="accent">SHIELD</span></span>
+    </div>
+    <div class="subtitle">Threat Intelligence Dashboard</div>
+  </div>
+  <div class="header-right">
+    <div class="live-indicator">
+      <span class="pulse-dot"></span>
+      <span>LIVE MONITORING</span>
+    </div>
+    <div class="header-time" id="currentTime"></div>
+  </div>
+</header>
+
+<!-- Navigation Tabs -->
+<nav class="nav-tabs">
+  <button class="tab-btn active" id="tab-overview" onclick="switchTab('overview')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Overview
+  </button>
+  <button class="tab-btn" id="tab-technical" onclick="switchTab('technical')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Technical Analysis
+  </button>
+  <button class="tab-btn" id="tab-investigation" onclick="switchTab('investigation')">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Investigation
+  </button>
+</nav>
+
+<!-- ============ PAGE: OVERVIEW ============ -->
+<div class="page active" id="page-overview">
+
+  <!-- KPI Cards -->
+  <section class="kpi-grid">
+    <div class="kpi-card" id="kpi-total">
+      <div class="kpi-icon red"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <div class="kpi-content">
+        <div class="kpi-value" id="val-total">0</div>
+        <div class="kpi-label">Total Attacks</div>
+        <div class="kpi-sub">5,000 events analyzed</div>
+      </div>
+    </div>
+    <div class="kpi-card" id="kpi-threat">
+      <div class="kpi-icon orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div class="kpi-content">
+        <div class="kpi-value" id="val-threat">0</div>
+        <div class="kpi-label">Avg Threat Score</div>
+        <div class="kpi-sub">Out of 100 max</div>
+      </div>
+    </div>
+    <div class="kpi-card" id="kpi-critical">
+      <div class="kpi-icon red"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+      <div class="kpi-content">
+        <div class="kpi-value" id="val-critical">0</div>
+        <div class="kpi-label">Critical IPs</div>
+        <div class="kpi-sub">Risk score = 100</div>
+      </div>
+    </div>
+    <div class="kpi-card" id="kpi-countries">
+      <div class="kpi-icon cyan"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+      <div class="kpi-content">
+        <div class="kpi-value" id="val-countries">0</div>
+        <div class="kpi-label">Source Countries</div>
+        <div class="kpi-sub">Global threat actors</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts Row 1 -->
+  <section class="charts-row">
+    <div class="chart-card wide">
+      <div class="chart-header">
+        <h3>🌍 Attacks by Country (Top 15)</h3>
+        <div class="chart-badge">Bar Chart</div>
+      </div>
+      <div class="chart-container" style="height:280px">
+        <canvas id="chartCountries"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>⚠️ Risk Level Distribution</h3>
+        <div class="chart-badge">Donut</div>
+      </div>
+      <div class="chart-container" style="height:280px">
+        <canvas id="chartRisk"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts Row 2 -->
+  <section class="charts-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>🔀 Protocol Split</h3>
+        <div class="chart-badge">Donut</div>
+      </div>
+      <div class="chart-container" style="height:250px">
+        <canvas id="chartProtocol"></canvas>
+      </div>
+    </div>
+    <div class="chart-card wide">
+      <div class="chart-header">
+        <h3>📅 Attack Timeline</h3>
+        <div class="chart-badge">Line Chart</div>
+      </div>
+      <div class="chart-container" style="height:250px">
+        <canvas id="chartTimeline"></canvas>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ PAGE: TECHNICAL ============ -->
+<div class="page" id="page-technical">
+
+  <section class="charts-row">
+    <div class="chart-card wide">
+      <div class="chart-header">
+        <h3>🎯 Top Attack Techniques (MITRE ATT&CK)</h3>
+        <div class="chart-badge">Horizontal Bar</div>
+      </div>
+      <div class="chart-container" style="height:320px">
+        <canvas id="chartTechniques"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>🔌 Targeted Ports</h3>
+        <div class="chart-badge">Bar Chart</div>
+      </div>
+      <div class="chart-container" style="height:320px">
+        <canvas id="chartPorts"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section class="charts-row">
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>💻 OS Distribution</h3>
+        <div class="chart-badge">Pie Chart</div>
+      </div>
+      <div class="chart-container" style="height:280px">
+        <canvas id="chartOS"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>🛡️ CVE Severity</h3>
+        <div class="chart-badge">Donut</div>
+      </div>
+      <div class="chart-container" style="height:280px">
+        <canvas id="chartCVE"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>⚔️ MITRE ATT&CK Tactics</h3>
+        <div class="chart-badge">Radar</div>
+      </div>
+      <div class="chart-container" style="height:280px">
+        <canvas id="chartTactics"></canvas>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ PAGE: INVESTIGATION ============ -->
+<div class="page" id="page-investigation">
+
+  <!-- Filter Bar -->
+  <section class="filter-bar">
+    <div class="filter-group">
+      <label>🔍 Search IP / Technique</label>
+      <input type="text" id="searchInput" class="filter-input" placeholder="e.g. 192.168 or Spearphishing..." oninput="filterTable()" />
+    </div>
+    <div class="filter-group">
+      <label>🌍 Country</label>
+      <select id="filterCountry" class="filter-select" onchange="filterTable()">
+        <option value="">All Countries</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>⚠️ Risk Level</label>
+      <select id="filterRisk" class="filter-select" onchange="filterTable()">
+        <option value="">All Levels</option>
+        <option value="Critical">Critical</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>🔀 Protocol</label>
+      <select id="filterProtocol" class="filter-select" onchange="filterTable()">
+        <option value="">All</option>
+        <option value="TCP">TCP</option>
+        <option value="UDP">UDP</option>
+      </select>
+    </div>
+    <button class="reset-btn" onclick="resetFilters()">↺ Reset</button>
+    <div class="result-count" id="resultCount">Showing 300 records</div>
+  </section>
+
+  <!-- Attack Log Table -->
+  <div class="table-wrapper">
+    <table class="attack-table" id="attackTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Source IP</th>
+          <th>Country</th>
+          <th>Port</th>
+          <th>Protocol</th>
+          <th>Technique</th>
+          <th>Tactic</th>
+          <th>Threat Score</th>
+          <th>Risk</th>
+          <th>CVE</th>
+          <th>Severity</th>
+          <th>OS</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <span>⚡ CyberShield Dashboard · Built with real threat data · 5,000 attack events analyzed</span>
+  <span>Data source: MITRE ATT&CK · CVE Database · Global IP Intelligence</span>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
